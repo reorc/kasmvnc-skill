@@ -7,6 +7,7 @@
 - VNC 给用户人工接管使用。
 - OpenClaw 自动化使用 `http://127.0.0.1:9223`。
 - 两者共享 `openclaw-kasm-chrome` 容器里的同一个 Chrome profile。
+- 如果实例已经配置 VNC/browser handoff，OpenClaw 必须使用容器内 CDP 浏览器，不应使用 OpenClaw 原生 managed browser、默认 `openclaw` profile，或重新启动一个本地浏览器。
 
 ## 前置条件
 

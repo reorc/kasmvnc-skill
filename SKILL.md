@@ -17,6 +17,11 @@ Use this skill for browser automation on Clawkeeper instances where VNC has been
 
 Control the browser through Chrome DevTools Protocol (CDP), not through the KasmVNC web UI.
 
+If Clawkeeper VNC/browser handoff is already configured for the instance, you must use the
+container CDP browser. Do not use OpenClaw's native managed browser, the default `openclaw`
+profile, or any newly launched local browser for the same task. The configured container browser is
+the source of truth because it shares the VNC-visible Chrome profile and user-completed login state.
+
 Use the OpenClaw browser tool with:
 
 - `profile="kasm_cdp"`
