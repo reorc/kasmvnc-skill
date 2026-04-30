@@ -94,7 +94,7 @@ openclaw skills list
 使用 kasm_cdp_browser 打开 https://example.com，检查当前登录状态。
 ```
 
-当遇到登录、2FA、扫码、验证码或授权弹窗时，OpenClaw 应暂停并让用户从 Clawkeeper Portal 打开同一实例的 VNC 入口完成操作。用户完成后，OpenClaw 继续通过 CDP 使用同一个 profile 中的登录态。
+当遇到登录、人机验证、2FA、扫码、验证码、授权弹窗、支付确认，或任何 Agent 无法自行完成的阻塞性步骤时，OpenClaw 必须暂停并请求人类帮助，让用户从 Clawkeeper Portal 打开同一实例的 VNC 入口手动处理。用户完成后，OpenClaw 继续通过 CDP 使用同一个 profile 中的登录态。
 
 ## 排障
 

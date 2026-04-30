@@ -66,11 +66,13 @@ If CDP is healthy, use OpenClaw browser actions through the `kasm_cdp` profile:
 
 ## Human Handoff
 
-When login, 2FA, QR code, CAPTCHA, consent, or payment confirmation blocks automation:
+When login, human verification, 2FA, QR code, CAPTCHA, consent, payment confirmation, or any other
+blocking step cannot be completed by the agent itself, you must request human help instead of trying
+to bypass, guess, or continue blindly.
 
 1. Pause the automation.
 2. Tell the user to open the Clawkeeper Portal VNC entry for the same instance.
-3. Ask the user to complete the manual step in the visible Chrome browser.
+3. Ask the user to complete the blocking step manually in the visible Chrome browser.
 4. After the user confirms completion, continue through CDP with `profile="kasm_cdp"`.
 
 The user and OpenClaw share the same browser profile, so cookies, local storage, and login state
