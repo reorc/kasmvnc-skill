@@ -7,7 +7,12 @@
 - VNC 给用户人工接管使用。
 - OpenClaw 自动化使用 `http://127.0.0.1:9223`。
 - 两者共享 `openclaw-kasm-chrome` 容器里的同一个 Chrome profile。
-- 如果实例已经配置 VNC/browser handoff，OpenClaw 必须使用容器内 CDP 浏览器，不应使用 OpenClaw 原生 managed browser、默认 `openclaw` profile，或重新启动一个本地浏览器。
+- 如果实例已经配置 VNC/browser handoff，OpenClaw 必须优先使用容器内 CDP 浏览器，不应使用
+  OpenClaw 原生 managed browser、默认 `openclaw` profile，或重新启动一个本地浏览器。
+- 只要环境里存在 `kasm-cdp` browser profile，普通网页浏览、登录复用、表单填写、抓取、人工接管
+  这类任务都应优先走 `profile="kasm-cdp"`，即使用户没有显式提到 Kasm/VNC。
+- 如果默认浏览器或本地浏览器报 `No supported browser found`，应立即 fallback 到
+  `profile="kasm-cdp"`，不要先切到 Playwright CLI。
 
 ## 前置条件
 
@@ -95,6 +100,9 @@ openclaw skills list
 使用 kasm_cdp_browser 打开 https://example.com，检查当前登录状态。
 ```
 
+OpenClaw 执行时应使用 browser tool 的 `profile="kasm-cdp"`。如果 agent 运行在 sandbox 中，
+同时使用 `target="host"`。
+
 当遇到登录、人机验证、2FA、扫码、验证码、授权弹窗、支付确认，或任何 Agent 无法自行完成的阻塞性步骤时，OpenClaw 必须暂停并请求人类帮助，让用户从 Clawkeeper Portal 打开同一实例的 VNC 入口手动处理。用户完成后，OpenClaw 继续通过 CDP 使用同一个 profile 中的登录态。
 
 ## 排障
@@ -112,6 +120,9 @@ systemctl status openclaw-kasm-autoheal.timer
 常见问题：
 
 - CDP 不通：容器未运行、健康检查失败，或 `9223` 没有映射到宿主机回环地址。
+- profile 名不一致：当前标准 profile 是 `kasm-cdp`，不是旧文档里的 `kasm_cdp`。
+- 默认浏览器失败：如果看到 `No supported browser found`，优先重试 `profile="kasm-cdp"` 和
+  `target="host"`，不要先改用 Playwright CLI。
 - 用户在 VNC 中关闭了 Chrome：等待几秒后重试。新版 Clawkeeper 镜像会自动拉起新的可见
   Chrome；如果 Docker health 长时间异常，宿主机 autoheal timer 会重启容器兜底。
 - VNC 能打开但 OpenClaw 看不到登录态：用户操作的 Chrome 与 CDP Chrome 没有使用同一个 profile。

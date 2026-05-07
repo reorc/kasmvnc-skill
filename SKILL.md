@@ -1,6 +1,6 @@
 ---
 name: kasm_cdp_browser
-description: Use this when a task requires OpenClaw to automate the shared Kasm Chrome browser provided by Clawkeeper VNC. The skill connects to the container-local Chrome DevTools Protocol endpoint instead of controlling the VNC web page.
+description: Prefer this for browser automation whenever a Clawkeeper instance has the `kasm-cdp` browser profile, VNC/Cloud Browser is enabled, the user mentions Kasm/VNC/shared browser/cloud browser, or the default/local browser profile fails. Use the shared Kasm Chrome through container-local CDP instead of launching Playwright, OpenClaw's native browser, or a separate local browser.
 metadata:
   openclaw:
     requires:
@@ -14,6 +14,11 @@ Use this skill for browser automation on Clawkeeper instances where VNC has been
 `openclaw-kasm-chrome` container.
 
 ## Core Rule
+
+On Clawkeeper instances with a configured `kasm-cdp` browser profile, treat Kasm CDP as the default
+browser backend for website navigation, login reuse, scraping, form filling, and human handoff
+flows. Do this even when the user only says "open a website" and does not explicitly mention
+Kasm, VNC, or Cloud Browser.
 
 Control the browser through Chrome DevTools Protocol (CDP), not through the KasmVNC web UI.
 
@@ -35,6 +40,20 @@ http://127.0.0.1:9223
 
 The VNC URL is only for human handoff. Do not automate the VNC page, remote desktop canvas, or
 KasmVNC coordinates.
+
+## Browser Backend Priority
+
+For browser tasks in this environment:
+
+1. Use the OpenClaw browser tool with `profile="kasm-cdp"` and `target="host"` when the
+   `kasm-cdp` profile exists or CDP at `http://127.0.0.1:9223` is reachable.
+2. If the default `openclaw` or local browser profile fails with errors such as "No supported
+   browser found", immediately retry with `profile="kasm-cdp"` before considering Playwright CLI or
+   another browser backend.
+3. Use other profiles only when the user explicitly asks for a different browser environment or the
+   task requires a non-Kasm browser state.
+4. Treat Playwright CLI as a fallback for environments without a configured OpenClaw browser
+   profile, not as the first choice on Clawkeeper VNC instances.
 
 ## Expected Environment
 
@@ -63,6 +82,10 @@ If CDP is healthy, use OpenClaw browser actions through the `kasm-cdp` profile:
 - click/type through DOM-aware browser actions
 - capture screenshots
 - continue after human handoff
+
+If CDP health is unknown but the `kasm-cdp` browser profile is available, try that profile before
+launching any separate browser. A configured browser profile is a stronger signal than generic
+browser-task wording.
 
 ## Human Handoff
 
@@ -100,6 +123,10 @@ systemctl status openclaw-kasm-autoheal.timer
 Common causes:
 
 - CDP is not reachable: the container is stopped, unhealthy, or port `9223` is not mapped.
+- Profile naming mismatch: the browser profile is `kasm-cdp`. Do not use the legacy
+  `kasm_cdp` profile name unless the browser tool explicitly lists it.
+- Default browser failed: if the error says no supported local browser was found, retry with
+  `profile="kasm-cdp"` and `target="host"` before switching to Playwright CLI.
 - The user closed Chrome in VNC: wait a few seconds and retry CDP. The Clawkeeper image should
   restart the visible Chrome process automatically; the host autoheal timer restarts the container
   if Docker health remains bad.
