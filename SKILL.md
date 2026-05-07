@@ -87,6 +87,16 @@ If CDP health is unknown but the `kasm-cdp` browser profile is available, try th
 launching any separate browser. A configured browser profile is a stronger signal than generic
 browser-task wording.
 
+## Tab Management
+
+Close tabs that are no longer needed for the current task. The Kasm Chrome profile persists cookies,
+local storage, and login state on disk, so closing an unused tab does not normally sign the user out
+or remove saved session state. Keeping only relevant tabs open reduces memory and CPU pressure on
+the instance.
+
+Before closing a tab, make sure it is not holding unsaved form input, an active checkout/payment
+step, a live chat/session, or a human handoff page that the user still needs to see in VNC.
+
 ## Human Handoff
 
 When login, human verification, 2FA, QR code, CAPTCHA, consent, payment confirmation, or any other

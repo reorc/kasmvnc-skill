@@ -103,6 +103,10 @@ openclaw skills list
 OpenClaw 执行时应使用 browser tool 的 `profile="kasm-cdp"`。如果 agent 运行在 sandbox 中，
 同时使用 `target="host"`。
 
+任务过程中可以关闭不再需要的标签页，减少实例内存和 CPU 占用。关闭标签页通常不会清除登录态；
+cookies、local storage 和 Chrome profile 会继续保留。不要关闭仍有未保存表单、支付流程、
+实时会话或用户正在 VNC 中处理的人工接管页面。
+
 当遇到登录、人机验证、2FA、扫码、验证码、授权弹窗、支付确认，或任何 Agent 无法自行完成的阻塞性步骤时，OpenClaw 必须暂停并请求人类帮助，让用户从 Clawkeeper Portal 打开同一实例的 VNC 入口手动处理。用户完成后，OpenClaw 继续通过 CDP 使用同一个 profile 中的登录态。
 
 ## 排障
