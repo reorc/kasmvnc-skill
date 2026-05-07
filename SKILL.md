@@ -24,7 +24,7 @@ the source of truth because it shares the VNC-visible Chrome profile and user-co
 
 Use the OpenClaw browser tool with:
 
-- `profile="kasm_cdp"`
+- `profile="kasm-cdp"`
 - `target="host"` when the agent run is sandboxed or when routing is ambiguous
 
 The expected CDP endpoint is:
@@ -56,7 +56,7 @@ curl -fsS http://127.0.0.1:9223/json/version
 
 Success should include a `Browser` field and a `webSocketDebuggerUrl`.
 
-If CDP is healthy, use OpenClaw browser actions through the `kasm_cdp` profile:
+If CDP is healthy, use OpenClaw browser actions through the `kasm-cdp` profile:
 
 - open/navigate target pages
 - inspect snapshots
@@ -73,7 +73,7 @@ to bypass, guess, or continue blindly.
 1. Pause the automation.
 2. Tell the user to open the Clawkeeper Portal VNC entry for the same instance.
 3. Ask the user to complete the blocking step manually in the visible Chrome browser.
-4. After the user confirms completion, continue through CDP with `profile="kasm_cdp"`.
+4. After the user confirms completion, continue through CDP with `profile="kasm-cdp"`.
 
 The user and OpenClaw share the same browser profile, so cookies, local storage, and login state
 should persist across handoff.
@@ -94,11 +94,15 @@ If browser automation fails before navigation:
 curl -fsS http://127.0.0.1:9223/json/version
 docker ps --filter name=openclaw-kasm-chrome
 docker logs --tail 200 openclaw-kasm-chrome
+systemctl status openclaw-kasm-autoheal.timer
 ```
 
 Common causes:
 
 - CDP is not reachable: the container is stopped, unhealthy, or port `9223` is not mapped.
+- The user closed Chrome in VNC: wait a few seconds and retry CDP. The Clawkeeper image should
+  restart the visible Chrome process automatically; the host autoheal timer restarts the container
+  if Docker health remains bad.
 - Login state is missing: the profile mount is wrong or the profile directory was removed.
 - User sees a different browser state: Chrome processes are not using the same profile.
 - Sandboxed OpenClaw cannot reach host CDP: use `target="host"` and enable host browser control in

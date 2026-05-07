@@ -59,11 +59,12 @@ openclaw skills list
 {
   browser: {
     enabled: true,
-    defaultProfile: "kasm_cdp",
+    defaultProfile: "kasm-cdp",
     profiles: {
-      kasm_cdp: {
+      "kasm-cdp": {
         cdpUrl: "http://127.0.0.1:9223",
-        color: "#16A34A"
+        color: "#16A34A",
+        attachOnly: true
       }
     }
   }
@@ -105,11 +106,14 @@ curl -fsS http://127.0.0.1:9223/json/version
 docker ps --filter name=openclaw-kasm-chrome
 docker logs --tail 200 openclaw-kasm-chrome
 curl -kI https://127.0.0.1:6901
+systemctl status openclaw-kasm-autoheal.timer
 ```
 
 常见问题：
 
 - CDP 不通：容器未运行、健康检查失败，或 `9223` 没有映射到宿主机回环地址。
+- 用户在 VNC 中关闭了 Chrome：等待几秒后重试。新版 Clawkeeper 镜像会自动拉起新的可见
+  Chrome；如果 Docker health 长时间异常，宿主机 autoheal timer 会重启容器兜底。
 - VNC 能打开但 OpenClaw 看不到登录态：用户操作的 Chrome 与 CDP Chrome 没有使用同一个 profile。
 - sandbox 内无法连接：browser tool 需要使用 `target="host"`，并允许 host browser control。
 - 不要把 CDP 端口配置到 frpc、Caddy 或公网安全组；CDP 只能作为 OpenClaw 内部控制通道使用。
