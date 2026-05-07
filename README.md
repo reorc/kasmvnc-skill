@@ -1,6 +1,6 @@
 # KasmVNC CDP Browser Skill
 
-这个仓库提供一个 OpenClaw skill，让 OpenClaw 在 Clawkeeper VNC 已启用后，直接使用容器内 Chrome 的 CDP，而不是去操作 KasmVNC 网页画面。
+这个仓库提供一个 OpenClaw skill，让 OpenClaw 在 ClawInOne VNC 已启用后，直接使用容器内 Chrome 的 CDP，而不是去操作 KasmVNC 网页画面。
 
 核心约定：
 
@@ -16,7 +16,7 @@
 
 ## 前置条件
 
-目标实例已经通过 Clawkeeper 启用 VNC/browser handoff 环境，并且实例内可以访问：
+目标实例已经通过 ClawInOne 启用 VNC/browser handoff 环境，并且实例内可以访问：
 
 ```bash
 curl -fsS http://127.0.0.1:9223/json/version
@@ -107,9 +107,9 @@ OpenClaw 执行时应使用 browser tool 的 `profile="kasm-cdp"`。如果 agent
 cookies、local storage 和 Chrome profile 会继续保留。不要关闭仍有未保存表单、支付流程、
 实时会话或用户正在 VNC 中处理的人工接管页面。
 
-当遇到登录、人机验证、2FA、扫码、验证码、授权弹窗、支付确认，或任何 Agent 无法自行完成的阻塞性步骤时，OpenClaw 必须暂停并请求人类帮助，让用户从 Clawkeeper Portal 打开同一实例的云浏览器/VNC 入口手动处理。用户完成后，OpenClaw 继续通过 CDP 使用同一个 profile 中的登录态。
+当遇到登录、人机验证、2FA、扫码、验证码、授权弹窗、支付确认，或任何 Agent 无法自行完成的阻塞性步骤时，OpenClaw 必须暂停并请求人类帮助，让用户从 ClawInOne Portal 打开同一实例的云浏览器/VNC 入口手动处理。用户完成后，OpenClaw 继续通过 CDP 使用同一个 profile 中的登录态。
 
-登录墙、登录弹窗遮挡搜索结果、账号选择页、扫码登录页、要求继续登录才能查看内容等情况，都属于人工接管触发条件。此时不要切换到 OpenClaw Browser Relay，不要让用户接入本地 Chrome 标签页，也不要索要账号密码；应继续保留 `profile="kasm-cdp"`，让用户在 Clawkeeper Portal 的云浏览器里完成登录。
+登录墙、登录弹窗遮挡搜索结果、账号选择页、扫码登录页、要求继续登录才能查看内容等情况，都属于人工接管触发条件。此时不要切换到 OpenClaw Browser Relay，不要让用户接入本地 Chrome 标签页，也不要索要账号密码；应继续保留 `profile="kasm-cdp"`，让用户在 ClawInOne Portal 的云浏览器里完成登录。
 
 ## 排障
 
@@ -129,9 +129,9 @@ systemctl status openclaw-kasm-autoheal.timer
 - profile 名不一致：当前标准 profile 是 `kasm-cdp`，不是旧文档里的 `kasm_cdp`。
 - 默认浏览器失败：如果看到 `No supported browser found`，优先重试 `profile="kasm-cdp"` 和
   `target="host"`，不要先改用 Playwright CLI。
-- 登录墙或登录弹窗挡住内容：暂停任务，让用户在 Clawkeeper Portal 云浏览器/VNC 里手动登录；
+- 登录墙或登录弹窗挡住内容：暂停任务，让用户在 ClawInOne Portal 云浏览器/VNC 里手动登录；
   不要改用 OpenClaw Browser Relay 或要求用户接入本地 Chrome。
-- 用户在 VNC 中关闭了 Chrome：等待几秒后重试。新版 Clawkeeper 镜像会自动拉起新的可见
+- 用户在 VNC 中关闭了 Chrome：等待几秒后重试。新版 ClawInOne 镜像会自动拉起新的可见
   Chrome；如果 Docker health 长时间异常，宿主机 autoheal timer 会重启容器兜底。
 - VNC 能打开但 OpenClaw 看不到登录态：用户操作的 Chrome 与 CDP Chrome 没有使用同一个 profile。
 - sandbox 内无法连接：browser tool 需要使用 `target="host"`，并允许 host browser control。

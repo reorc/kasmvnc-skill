@@ -1,6 +1,6 @@
 ---
 name: kasm_cdp_browser
-description: Prefer this for browser automation whenever a Clawkeeper instance has the `kasm-cdp` browser profile, VNC/Cloud Browser is enabled, the user mentions Kasm/VNC/shared browser/cloud browser, or the default/local browser profile fails. Use the shared Kasm Chrome through container-local CDP instead of launching Playwright, OpenClaw's native browser, or a separate local browser.
+description: Prefer this for browser automation whenever a ClawInOne instance has the `kasm-cdp` browser profile, VNC/Cloud Browser is enabled, the user mentions Kasm/VNC/shared browser/cloud browser, or the default/local browser profile fails. Use the shared Kasm Chrome through container-local CDP instead of launching Playwright, OpenClaw's native browser, or a separate local browser.
 metadata:
   openclaw:
     requires:
@@ -10,19 +10,19 @@ metadata:
 
 # Kasm CDP Browser
 
-Use this skill for browser automation on Clawkeeper instances where VNC has been enabled with the
+Use this skill for browser automation on ClawInOne instances where VNC has been enabled with the
 `openclaw-kasm-chrome` container.
 
 ## Core Rule
 
-On Clawkeeper instances with a configured `kasm-cdp` browser profile, treat Kasm CDP as the default
+On ClawInOne instances with a configured `kasm-cdp` browser profile, treat Kasm CDP as the default
 browser backend for website navigation, login reuse, scraping, form filling, and human handoff
 flows. Do this even when the user only says "open a website" and does not explicitly mention
 Kasm, VNC, or Cloud Browser.
 
 Control the browser through Chrome DevTools Protocol (CDP), not through the KasmVNC web UI.
 
-If Clawkeeper VNC/browser handoff is already configured for the instance, you must use the
+If ClawInOne VNC/browser handoff is already configured for the instance, you must use the
 container CDP browser. Do not use OpenClaw's native managed browser, the default `openclaw`
 profile, or any newly launched local browser for the same task. The configured container browser is
 the source of truth because it shares the VNC-visible Chrome profile and user-completed login state.
@@ -53,11 +53,11 @@ For browser tasks in this environment:
 3. Use other profiles only when the user explicitly asks for a different browser environment or the
    task requires a non-Kasm browser state.
 4. Treat Playwright CLI as a fallback for environments without a configured OpenClaw browser
-   profile, not as the first choice on Clawkeeper VNC instances.
+   profile, not as the first choice on ClawInOne VNC instances.
 
 ## Expected Environment
 
-The instance should already have the Clawkeeper VNC/browser handoff environment enabled:
+The instance should already have the ClawInOne VNC/browser handoff environment enabled:
 
 - Docker container: `openclaw-kasm-chrome`
 - KasmVNC web endpoint: `https://127.0.0.1:6901`
@@ -107,10 +107,10 @@ Login walls, login popups, search results hidden behind a login modal, account s
 QR-code login prompts, and "continue in app/browser" blocks are all human handoff triggers. When any
 of these appear, do not switch to Browser Relay, do not ask the user to attach a local Chrome tab,
 and do not ask for credentials. Keep using the same `kasm-cdp` browser profile and ask the user to
-complete the login in the Clawkeeper Portal Cloud Browser/VNC window.
+complete the login in the ClawInOne Portal Cloud Browser/VNC window.
 
 1. Pause the automation.
-2. Tell the user to open the Clawkeeper Portal Cloud Browser/VNC entry for the same instance.
+2. Tell the user to open the ClawInOne Portal Cloud Browser/VNC entry for the same instance.
 3. Ask the user to complete the blocking step manually in the visible Kasm Chrome browser.
 4. After the user confirms completion, continue through CDP with `profile="kasm-cdp"`.
 
@@ -145,7 +145,7 @@ Common causes:
   `kasm_cdp` profile name unless the browser tool explicitly lists it.
 - Default browser failed: if the error says no supported local browser was found, retry with
   `profile="kasm-cdp"` and `target="host"` before switching to Playwright CLI.
-- The user closed Chrome in VNC: wait a few seconds and retry CDP. The Clawkeeper image should
+- The user closed Chrome in VNC: wait a few seconds and retry CDP. The ClawInOne image should
   restart the visible Chrome process automatically; the host autoheal timer restarts the container
   if Docker health remains bad.
 - Login state is missing: the profile mount is wrong or the profile directory was removed.
